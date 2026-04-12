@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fabrication Project Tracking App</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="appShell">
+    <header class="appHeader">
+      <h1>Fabrication Project Tracking App</h1>
+      <div id="statusText" class="statusText">Ready</div>
+    </header>
+
+    <main>
+      <section id="stepEmployee" class="card step active">
+        <h2>Step 1 — Scan Employee</h2>
+        <textarea id="employeeInput" placeholder="Paste employee QR text here for testing"></textarea>
+        <div class="row gap">
+          <button id="btnEmployeeSubmit">Confirm Employee</button>
+          <button id="btnEmployeeClear" class="secondary">Clear</button>
+        </div>
+        <div id="employeePreview" class="previewBox"></div>
+      </section>
+
+      <section id="stepItems" class="card step">
+        <h2>Step 2 — Scan Items (Max 20)</h2>
+        <textarea id="itemInput" placeholder="Paste item QR text here, one at a time"></textarea>
+        <div class="row gap wrap">
+          <button id="btnAddItem">Add Item</button>
+          <button id="btnClearItems" class="secondary">Clear All</button>
+          <button id="btnGoReview">Next</button>
+        </div>
+        <div id="itemCount" class="metaText">0 / 20 items</div>
+        <div id="itemList"></div>
+      </section>
+
+      <section id="stepReview" class="card step">
+        <h2>Step 3 — Review, Select Process, and Track</h2>
+        <div id="groupedItems"></div>
+
+        <label for="processSelect">Process</label>
+        <select id="processSelect">
+          <option value="">-- Select process --</option>
+          <option>1A - Plasma cutting</option>
+          <option>1B - Bevelling</option>
+          <option>2A - Shotblast</option>
+          <option>2B - Shotblast</option>
+          <option>3 - Longtidunal SAW</option>
+          <option>4 - Rerolling</option>
+          <option>5 - Circumference SAW (Two shells joining)</option>
+        </select>
+
+        <div class="timerBox">
+          <div id="timerDisplay" class="timerDisplay">00:00:00</div>
+          <div id="runMeta" class="metaText">No active batch</div>
+        </div>
+
+        <div class="row gap wrap">
+          <button id="btnStart">Start</button>
+          <button id="btnHold" class="warn" disabled>On Hold</button>
+          <button id="btnResume" disabled>Resume</button>
+          <button id="btnComplete" class="success" disabled>Complete</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f5f7fb;
+  color: #1f2937;
+}
+
+.appShell {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 16px;
+}
+.appHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.08);
+  margin-bottom: 16px;
+}
+.step { display: none; }
+.step.active { display: block; }
+.row {
+  display: flex;
+  align-items: center;
+}
+.wrap { flex-wrap: wrap; }
+.gap { gap: 10px; }
+textarea, select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  margin: 10px 0;
+}
+button {
+  border: 0;
+  border-radius: 12px;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+button.secondary { background: #e5e7eb; }
+button.warn { background: #f59e0b; color: white; }
+button.success { background: #10b981; color: white; }
+button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+.previewBox, .itemCard, .groupCard {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px;
+  margin-top: 10px;
+}
+.metaText {
+  color: #6b7280;
+  font-size: 14px;
+}
+.timerBox {
+  margin: 14px 0;
+  padding: 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  background: #f9fafb;
+}
+.timerDisplay {
+  font-size: 36px;
+  font-weight: 700;
+}
+.itemListRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+.codeTag {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #eef2ff;
+  font-size: 12px;
+  margin-right: 6px;
+}
+.statusText {
+  font-size: 14px;
+  color: #374151;
+}
