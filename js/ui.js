@@ -1,6 +1,10 @@
 import { state } from "./state.js";
 import { groupItemsByChiller } from "./qr.js";
 
+const chip1 = document.getElementById("chip1");
+const chip2 = document.getElementById("chip2");
+const chip3 = document.getElementById("chip3");
+
 const els = {
   stepEmployee: document.getElementById("stepEmployee"),
   stepItems: document.getElementById("stepItems"),
@@ -25,9 +29,22 @@ export function showStep(stepNo) {
   els.stepItems.classList.remove("active");
   els.stepReview.classList.remove("active");
 
-  if (stepNo === 1) els.stepEmployee.classList.add("active");
-  if (stepNo === 2) els.stepItems.classList.add("active");
-  if (stepNo === 3) els.stepReview.classList.add("active");
+  chip1?.classList.remove("active");
+  chip2?.classList.remove("active");
+  chip3?.classList.remove("active");
+
+  if (stepNo === 1) {
+    els.stepEmployee.classList.add("active");
+    chip1?.classList.add("active");
+  }
+  if (stepNo === 2) {
+    els.stepItems.classList.add("active");
+    chip2?.classList.add("active");
+  }
+  if (stepNo === 3) {
+    els.stepReview.classList.add("active");
+    chip3?.classList.add("active");
+  }
 }
 
 export function renderEmployee() {

@@ -1,70 +1,208 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Fabrication Project Tracking App</title>
-  <link rel="stylesheet" href="./styles.css" />
+
+  <!-- QR library -->
+  <script src="https://unpkg.com/html5-qrcode"></script>
+
+  <!-- Load CSS -->
+  <link rel="stylesheet" href="./styles.css">
 </head>
+
 <body>
-  <div class="appShell">
-    <header class="appHeader">
-      <h1>Fabrication Project Tracking App</h1>
-      <div id="statusText" class="statusText">Ready</div>
-    </header>
+  <div class="wrap">
+    <h2>Fabrication Project Tracking App</h2>
 
-    <main>
-      <section id="stepEmployee" class="card step active">
-        <h2>Step 1 — Scan Employee</h2>
-        <textarea id="employeeInput" placeholder="Paste employee QR text here for testing"></textarea>
-        <div class="row gap">
-          <button id="btnEmployeeSubmit">Confirm Employee</button>
-          <button id="btnEmployeeClear" class="secondary">Clear</button>
+    <!-- Step indicator -->
+    <div class="stepperCard">
+      <div class="stepperLine">
+        <div class="stepperLineFill" id="stepFill"></div>
+      </div>
+
+      <div class="stepperSteps">
+        <div class="sStep" id="step1">
+          <div class="sDot"><span class="sCheck">✓</span></div>
+          <div class="sLbl">QR EMPLOYEE</div>
         </div>
-        <div id="employeePreview" class="previewBox"></div>
-      </section>
 
-      <section id="stepItems" class="card step">
-        <h2>Step 2 — Scan Items (Max 20)</h2>
-        <textarea id="itemInput" placeholder="Paste item QR text here, one at a time"></textarea>
-        <div class="row gap wrap">
-          <button id="btnAddItem">Add Item</button>
-          <button id="btnClearItems" class="secondary">Clear All</button>
-          <button id="btnGoReview">Next</button>
+        <div class="sStep" id="step2">
+          <div class="sDot"><span class="sCheck">✓</span></div>
+          <div class="sLbl">QR ITEMS</div>
         </div>
-        <div id="itemCount" class="metaText">0 / 20 items</div>
-        <div id="itemList"></div>
-      </section>
 
-      <section id="stepReview" class="card step">
-        <h2>Step 3 — Review, Select Process, and Track</h2>
+        <div class="sStep" id="step3">
+          <div class="sDot"><span class="sCheck">✓</span></div>
+          <div class="sLbl">FAB STATUS</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Shared scanner -->
+    <div id="reader" style="width:100%; margin-top:10px;"></div>
+    <button id="start-scan" style="margin-bottom:18px;">Scan QR Code</button>
+    <div id="scan-status" class="scan-status hidden"></div>
+
+    <div id="qr-result" class="hidden"></div>
+
+    <!-- SCREEN 1 -->
+    <section id="screen-employee" class="screen">
+      <h3>Employee Info</h3>
+
+      <div class="field"><b>Employee Name:</b> <span id="empName">-</span></div>
+      <div class="field"><b>Employee No:</b> <span id="empNo">-</span></div>
+      <div class="field"><b>Station:</b> <span id="empStation">-</span></div>
+
+      <label for="manpowerInput">Manpower</label>
+      <input
+        id="manpowerInput"
+        type="number"
+        min="1"
+        step="1"
+        placeholder="e.g. 3"
+        style="margin-bottom:18px;"
+      />
+
+      <button id="to-items" class="secondary">Submit</button>
+    </section>
+
+    <!-- SCREEN 2 -->
+    <section id="screen-items" class="screen hidden">
+      <h3>Scanned Items</h3>
+
+      <div class="field">
+        <b>Total Items:</b> <span id="itemCount">0</span> / 20
+      </div>
+
+      <div id="itemList" class="itemList">
+        <div class="hint">No items scanned yet.</div>
+      </div>
+
+      <div class="actionStack">
+        <button id="btnClearItems" class="secondary">Clear All Items</button>
+        <button id="to-status" class="secondary">Submit</button>
+      </div>
+    </section>
+
+    <!-- SCREEN 3 -->
+    <section id="screen-status" class="screen hidden">
+      <h3>Fabrication Batch Description</h3>
+
+      <div class="status-header">
+        <div>
+          <span class="status-label">Employee</span>
+          <span id="statusEmployee">-</span>
+        </div>
+        <div>
+          <span class="status-label">Employee No</span>
+          <span id="statusEmpNo">-</span>
+        </div>
+        <div>
+          <span class="status-label">Station</span>
+          <span id="statusStation">-</span>
+        </div>
+        <div>
+          <span class="status-label">Manpower</span>
+          <span id="statusManpower">-</span>
+        </div>
+        <div>
+          <span class="status-label">Total Items</span>
+          <span id="statusTotalItems">-</span>
+        </div>
+        <div>
+          <span class="status-label">Total Projects</span>
+          <span id="statusTotalProjects">-</span>
+        </div>
+      </div>
+
+      <div class="groupedWrap">
+        <div class="groupedTitle">Grouped by Project</div>
         <div id="groupedItems"></div>
+      </div>
 
-        <label for="processSelect">Process</label>
-        <select id="processSelect">
-          <option value="">-- Select process --</option>
-          <option>1A - Plasma cutting</option>
-          <option>1B - Bevelling</option>
-          <option>2A - Shotblast</option>
-          <option>2B - Shotblast</option>
-          <option>3 - Longtidunal SAW</option>
-          <option>4 - Rerolling</option>
-          <option>5 - Circumference SAW (Two shells joining)</option>
-        </select>
+      <div class="label">Process</div>
+      <select id="processSelect">
+        <option value="">Select process</option>
+        <option value="1A - Plasma cutting">1A - Plasma cutting</option>
+        <option value="1B - Bevelling">1B - Bevelling</option>
+        <option value="2A - Shotblast">2A - Shotblast</option>
+        <option value="2B - Rolling">2B - Rolling</option>
+        <option value="3 - Longtidunal SAW">3 - Longtidunal SAW</option>
+        <option value="4 - Rerolling">4 - Rerolling</option>
+        <option value="5 - Circumference SAW (Two shells joining)">5 - Circumference SAW (Two shells joining)</option>
+      </select>
 
-        <div class="timerBox">
-          <div id="timerDisplay" class="timerDisplay">00:00:00</div>
-          <div id="runMeta" class="metaText">No active batch</div>
-        </div>
+      <div class="stopwatch-box">
+        <div class="sw-label">Stopwatch</div>
+        <div id="stopwatch">00:00:00</div>
+        <div id="runMeta" class="hint">No active batch session</div>
+      </div>
 
-        <div class="row gap wrap">
-          <button id="btnStart">Start</button>
-          <button id="btnHold" class="warn" disabled>On Hold</button>
-          <button id="btnResume" disabled>Resume</button>
-          <button id="btnComplete" class="success" disabled>Complete</button>
-        </div>
-      </section>
-    </main>
+      <button id="btnStartProcess">Start</button>
+
+      <div class="btnRow">
+        <button id="btnStopProcess" disabled>Completed</button>
+        <button id="btnHoldProcess" disabled>On Hold</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- On Hold Modal -->
+  <div id="holdModal" class="modal hidden">
+    <div class="modal-card">
+      <h3>Put Process On Hold</h3>
+
+      <label for="holdReason">Reason</label>
+      <select id="holdReason">
+        <option value="">Select a reason</option>
+        <option value="rework">Rework Required</option>
+        <option value="parts_shortage">Parts Shortage</option>
+        <option value="mt_asme">MT / ASME</option>
+        <option value="parts_ng">Parts NG</option>
+        <option value="drawing_ng">Drawing NG</option>
+        <option value="resume_tomorrow">Resume Next Shift / Tomorrow</option>
+        <option value="others">Others (specify)</option>
+      </select>
+
+      <label for="holdRemarks" id="holdRemarksLabel" class="hidden">Remarks (Required)</label>
+      <textarea
+        id="holdRemarks"
+        class="hidden"
+        rows="4"
+        placeholder="Please explain the reason in detail."
+      ></textarea>
+
+      <div class="modal-actions">
+        <button id="holdCancel" class="secondary">Cancel</button>
+        <button id="holdSave" class="btnWarn">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Complete Modal -->
+  <div id="completeModal" class="modal hidden">
+    <div class="modal-card">
+      <h3>Complete Process</h3>
+
+      <p id="completeText" style="margin:8px 0 12px; color: var(--muted);">
+        Are you sure this process is complete?
+      </p>
+
+      <div class="modal-actions">
+        <button id="completeCancel" class="btnDanger">No</button>
+        <button id="completeConfirm" class="secondary">Yes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Saving Overlay -->
+  <div id="saveOverlay" class="overlay hidden">
+    <div class="overlay-card">
+      <div class="spinner"></div>
+      <div id="saveOverlayText" class="overlay-text">Saving...</div>
+    </div>
   </div>
 
   <script type="module" src="js/main.js"></script>
